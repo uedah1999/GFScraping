@@ -7,8 +7,10 @@ import pandas as pd
 import os
 import traceback
 
+station_name = 'KARE'
+
 # imports the file with links
-file = '../KARE_test_links.csv'
+file_prog_links = '../Data/{}_url_programs.csv'.format(station_name)
 cols = [str(i) for i in range(1,6)]
 programs = pd.read_csv(file, names = cols, header = None)
 links = programs.fillna(0).iloc[:, [-1]]
@@ -17,9 +19,18 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
+# options to make webdriver run in the background
+op = Options()
+op.add_argument("--disable-gpu");
+op.add_argument("--disable-extensions");
+op.add_argument("--proxy-server='direct://'");
+op.add_argument("--proxy-bypass-list=*");
+op.add_argument("--start-maximized");
+op.add_argument("--headless");
+
+driver = webdriver.Chrome(options=op)
 
 # this function formats the date so that it can be used for directory names
 def return_Date_str(Date):
