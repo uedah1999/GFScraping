@@ -1,5 +1,6 @@
-# Given a csv file downloaded from News Data Service,
-# returns a 
+# Given a xls file downloaded from News Data Service,
+# returns unique broadcast as a csv file
+# Written by Hiromichi Ueda in January 2021
 
 import pandas as pd
 import csv
