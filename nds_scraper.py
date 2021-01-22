@@ -2,18 +2,17 @@
 # scrape the text within the url, and store it in the directory we want.
 # Written by Nobuaki Masaki in June 2019
 # Revised by Xinyan Xiang in July 2020
+# Revised by Hiromichi Ueda in January 2021
 
 import pandas as pd
 import os
-import traceback
 
-station_name = 'KARE'
+station_name = 'WCCO'
 
 # imports the file with links
-file_prog_links = '../Data/{}_url_programs.csv'.format(station_name)
-cols = [str(i) for i in range(1,6)]
-programs = pd.read_csv(file, names = cols, header = None)
-links = programs.fillna(0).iloc[:, [-1]]
+programs_url_links = '../GFData/{}_url_programs.csv'.format(station_name)
+programs = pd.read_csv(programs_url_links)
+df = pd.read_csv(programs_url_links, index_col=0)
 
 import time
 from selenium import webdriver
@@ -108,52 +107,49 @@ def month_get(Date):
 error = []
 
 # iterate through all of the links
-for row in links.itertuples():
-    for i in range(1, len(row)):
-        # if link is not NA
-        if row[i] != 0:
-            try:
-                print("scraping text from: " + row[i])
-                # go to link
-                driver.get(row[i])
-                # extract text from the body of the website
-                body = driver.find_element_by_xpath("/html/body/table/tbody").text
-                # split body of the text by line
-                split = body.splitlines()
-                # extract station
-                station = split[0].strip()
-                # extract date and broadcast
-                date_broadcast = split[1]
-                date_broadcast_split = date_broadcast.split("  ")
-                date, month = return_Date_str(date_broadcast_split[0])
-                broadcast = date_broadcast_split[1].strip()
+for index, row in df.iterrows():
+    if pd.isna(row['URL']):
+        print("index {} has missing URL".format(index))
+    elif row['Scraped']:
+        print("index {} has already been scraped".format(index))
+    else:
+        try:
+            print("scraping text from index {}".format(index))
+            # go to link
+            driver.get(row['URL'])
+            # extract text from the body of the website
+            body = driver.find_element_by_xpath("/html/body/table/tbody").text
+            # split body of the text by line
+            split = body.splitlines()
+            # extract station
+            station = split[0].strip()
+            # extract date and broadcast
+            date_broadcast = split[1]
+            date_broadcast_split = date_broadcast.split("  ")
+            date, month = return_Date_str(date_broadcast_split[0])
+            broadcast = date_broadcast_split[1].strip()
 
-                # extract the first timestamp
-                first_paragraph = split[2].split(" ")
-                time = first_paragraph[0][3:]
-                time = time.replace(":", "_").strip()
-                am_pm = first_paragraph[1][:2].strip()
+            # extract the first timestamp
+            first_paragraph = split[2].split(" ")
+            time = first_paragraph[0][3:]
+            time = time.replace(":", "_").strip()
+            am_pm = first_paragraph[1][:2].strip()
 
-                # save the text of the body to a text file in the directory below (e.g. news_broadcasts_2008/KARE/1/KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt)
-                filename = station + " " + date + " " + time + am_pm + " " + broadcast + ".txt"
+            # save the text of the body to a text file in the directory below (e.g. news_broadcasts_2008/KARE/1/KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt)
+            filename = station + " " + date + " " + time + am_pm + " " + broadcast + ".txt"
 
-                # get the yeat and month
-                yearA = year_get(date_broadcast_split[0])
-                monthA = month_get(date_broadcast_split[0])
+            # get the yeat and month
+            yearA = year_get(date_broadcast_split[0])
+            monthA = month_get(date_broadcast_split[0])
 
-                # store the scraing files into the locations that we want
-                filepath = os.path.join("../KARE/", filename)
-                file = open(filepath, "w")
-                file.write(body)
-                file.close()
-                Success = True
-            except:
-                print("Error scraping link.")
-                # store links that were not scraped
-                error.append(row[i])
-                traceback.print_exc()
+            # store the scraing files into the locations that we want
+            filepath = os.path.join("../GFData/", station_name, filename)
+            file = open(filepath, "w")
+            file.write(body)
+            file.close()
+            df.iloc[index, -1] = True
+        except:
+            print("failed to scrape text from index {}".format(index))
 
-# writing links that were not scraped to a file
-with open('error.txt', 'w') as error_file:
-    for url in error:
-        error_file.write('%s\n' % url)
+df.to_csv(programs_url_links)
+driver.quit()
