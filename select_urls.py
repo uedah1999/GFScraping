@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import csv
 
-station_name = 'KARE'
+station_name = 'KMSP'
 
 all_urls_file = '../GFData/{}_url_all.csv'.format(station_name)
 programs_file = '../GFData/{}_programs.csv'.format(station_name) #change it to your file
@@ -17,10 +17,10 @@ df_prog['URL'] = np.nan
 
 search_start = 0
 for i in range(df_prog.shape[0]):
-    ith_row_id = df_prog.iloc[i,:-1].values 
+    ith_row_id = df_prog.iloc[i,:5].values 
     j = search_start
     while j < df_url.shape[0]:
-        jth_row_id = df_url.iloc[j,:-1].values
+        jth_row_id = df_url.iloc[j,:5].values
         if all(ith_row_id == jth_row_id):
             df_prog.iloc[i,-1] = df_url.iloc[j,-1]
             search_start = j+1
