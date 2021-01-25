@@ -31,10 +31,17 @@ filepath = os.path.join("../GFData/{}/".format(station), filename)
 ```
 Based on the usage of the data, the directories will change, so make sure to change the file paths appropriately. 
 
-## Update on January 2021
+### Executing the scripts
+Execute `nds_main.py` after changing the four file paths:
+- `nds_xls`: the Excel sheet downloaded in the above *Collect the necessary data* section.
+- `programs_file`: the csv file which stores each unique program in `nds_xls` with its Date, Time, Title, Source (station), Market (state & city / national), URL and Scraped status.
+- `urls_file`: the csv file which stores the urls obtained from queries based on programs in `programs_file`. Each query on NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList) consists of States, Cities, Sources, and Program Date. Thus, `urls_file` includes the programs in `programs_file` and others that appear in one of the queries.
+- `failed_query_file`: the csv file which stores the failed queries. More on failed queries in the *Scripts Logic* section.
+
+## Update of January 2021
 The original scripts were written in June 2019, revised in July 2020, but had issues of 1) scraping unnecessary transcripts, and 2) missing necessary transcripts. Main updates on January 2021 include:
 - Transferred all scripts to Python in order to execute the whole process with a single file `nds_main.py`
 - For each broadcast in the original excel file, the output csv file indicates
     1. whether the URL was collected
     2. whether the transcript was scraped  
-- The crawler of the URLs account for the fact that some queries on NDS "fail" by taking too long.
+- The crawler of the URLs accounts for the fact that some queries on NDS "fail" by taking too long.
