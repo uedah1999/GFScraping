@@ -27,14 +27,13 @@ op.add_argument("--proxy-bypass-list=*");
 op.add_argument("--start-maximized");
 op.add_argument("--headless");
 
-station_name = 'KMSP'
-nds_xls = '../GFData/{}_Pt1.xls'.format(station_name)
-programs_file = '../GFData/{}_programs.csv'.format(station_name)
-urls_file = '../GFData/{}_url_all.csv'.format(station_name)
-failed_query_file = '../GFData/{}_failed_query.csv'.format(station_name)
-programs_url_links = '../GFData/{}_url_programs.csv'.format(station_name)
+nds_xls = '../GFData/Pt2.xls' # Excel file downloaded from 
+programs_file = '../GFData/Pt2_programs.csv' # csv file to store programs
+urls_file = '../GFData/Pt2_url_all.csv' # csv file to store all the urls from queries related to each program
+failed_query_file = '../GFData/Pt2_failed_query.csv' # csv file to write which queries have encountered fatal error
+unscraped_programs_file = '../GFData/Pt2_unscraped.csv' # csv file to store programs that need to be scraped.
 
 get_unique_program(nds_xls, programs_file)
 nds_crawl(programs_file, urls_file, failed_query_file, driver_option=op)
-select_urls(urls_file, programs_file, programs_url_links)
-nds_scrape(programs_url_links, driver_option=op)
+select_urls(urls_file, programs_file)
+nds_scrape(programs_file, unscraped_programs_file, driver_option=op)

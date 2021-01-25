@@ -84,7 +84,7 @@ def month_get(Date):
 
     return month
 
-def nds_scrape(programs_file, driver_option):
+def nds_scrape(programs_file, unscraped_programs_file, driver_option):
     df = pd.read_csv(programs_file, index_col=0)
     driver = webdriver.Chrome(options=driver_option)
 
@@ -129,9 +129,12 @@ def nds_scrape(programs_file, driver_option):
                 file = open(filepath, "w")
                 file.write(body)
                 file.close()
-                df.iloc[index, -1] = True
+                df.loc[index, 'Scraped'] = True
             except:
                 print("failed to scrape text from index {}".format(index))
 
+    df_unscraped = df[~df['Scraped']]
+    
     df.to_csv(programs_file)
+    df_unscraped.to_csv(unscraped_programs_file)
     driver.quit()
