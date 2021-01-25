@@ -10,7 +10,8 @@ def get_Time_and_Title(nds_url_str):
     prog_title = nds_url_str.split('&')[4].split('=')[-1].replace('%20', ' ')
     return prog_datetime[11:], prog_title
 
-def select_urls(all_urls_file, programs_file, programs_url_links):
+def select_urls(all_urls_file, programs_file):
+    # df_prog has column names Date, Time, Title, Source, Market, URL, Scraped in this order   
     df_prog = pd.read_csv(programs_file, index_col=0)
     df_url = pd.read_csv(all_urls_file, header=None)
 
@@ -30,11 +31,12 @@ def select_urls(all_urls_file, programs_file, programs_url_links):
         while j < df_url.shape[0]:
             jth_row_id = df_url.iloc[j,:5].values
             if all(ith_row_id == jth_row_id):
-                df_prog.iloc[i,-1] = df_url.iloc[j,-1] #copy url
+                df_prog.iloc[i,5] = df_url.iloc[j,5] #copy url
                 search_start = j+1
                 break
             else:
                 j += 1
 
     df_prog['Scraped'] = False
-    df_prog.to_csv(programs_url_links)
+    df_prog.to_csv(programs_file)
+    df_missing.to_csv(all_urls_file, header=False, index=False)
