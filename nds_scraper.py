@@ -84,9 +84,8 @@ def month_get(Date):
 
     return month
 
-def nds_scrape(programs_url_links, driver_option):
-    programs = pd.read_csv(programs_url_links)
-    df = pd.read_csv(programs_url_links, index_col=0)
+def nds_scrape(programs_file, driver_option):
+    df = pd.read_csv(programs_file, index_col=0)
     driver = webdriver.Chrome(options=driver_option)
 
     # iterate through all of the links
@@ -134,5 +133,5 @@ def nds_scrape(programs_url_links, driver_option):
             except:
                 print("failed to scrape text from index {}".format(index))
 
-    df.to_csv(programs_url_links)
+    df.to_csv(programs_file)
     driver.quit()
