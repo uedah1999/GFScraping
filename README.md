@@ -10,7 +10,7 @@ macOS Big Sur is the only environment in which the scripts have been executed
 - ChromeDriver
     - **DO NOT USE** `pip install chromedriver-binary` 
     - install Chrome and follow this [version selection guide](https://chromedriver.chromium.org/downloads/version-selection) to download the collect version
-    - place the `chromedriver.exe` file to `/usr/local/bin`
+    - copy the `chromedriver.exe` file to `/usr/local/bin`
 
 ## How to use the scripts
 ### Collect the necessary data
@@ -25,7 +25,7 @@ The scripts depend on NDS website having a specific structure, since they use XP
 For details of how to check XPaths of elements, check [this blog](https://yizeng.me/2014/03/23/evaluate-and-validate-xpath-css-selectors-in-chrome-developer-tools/) or other information on the Internet.
 
 ### Choose the directories to store the transcripts
-The project conducted in January 2021 was concerned with scraping a relatively small dataset of 442 transcripts from four stations. Thus, `nds_scraper.py` stores each transcript to the corresponding directory, determined solely based on station name (line **FILL THIS IN**)
+The project conducted in January 2021 was concerned with scraping a relatively small dataset of 442 transcripts from four stations. Thus, `nds_scraper.py` stores each transcript to the corresponding directory, determined solely based on station name (line 128)
 ```python
 filepath = os.path.join("../GFData/{}/".format(station), filename)
 ```

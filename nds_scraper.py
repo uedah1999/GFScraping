@@ -133,8 +133,7 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
             except:
                 print("failed to scrape text from index {}".format(index))
 
-    df_unscraped = df[~df['Scraped']]
-    
+    df_unscraped = df[~df['Scraped']] # programs that were not scraped
     df.to_csv(programs_file)
     df_unscraped.to_csv(unscraped_programs_file)
     driver.quit()
