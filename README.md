@@ -1,5 +1,6 @@
 # GFScraping
 The scripts are written by Hiromichi Ueda '21, working for [the DataSquad](https://datasquad.at.sites.carleton.edu). They were last executed in January 2021.   
+![alt text](./DataSquad_logo.png)   
 This repository contains files to crawl and scrape news broadcast transcripts as `.txt` files, given an excel sheet from [News Data Service](https://newsdataservice.com) (NDS).
 
 ## Requirement 
