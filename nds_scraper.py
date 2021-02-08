@@ -37,52 +37,6 @@ def return_Date_str(Date):
     year = parse_date[2]
 
     return year + "-" + month + "-" + date, month
-def year_get(Date):
-    monthToNum = {
-        'JAN' : '1',
-        'FEB' : '2',
-        'MAR' : '3',
-        'APR' : '4',
-        'MAY' : '5',
-        'JUN' : '6',
-        'JUL' : '7',
-        'AUG' : '8',
-        'SEP' : '9',
-        'OCT' : '10',
-        'NOV' : '11',
-        'DEC' : '12'
-    }
-
-    parse_date = Date.split(" ")
-
-    month = monthToNum[parse_date[0]]
-    date = parse_date[1]
-    year = parse_date[2]
-
-    return year
-def month_get(Date):
-    monthToNum = {
-        'JAN' : '1',
-        'FEB' : '2',
-        'MAR' : '3',
-        'APR' : '4',
-        'MAY' : '5',
-        'JUN' : '6',
-        'JUL' : '7',
-        'AUG' : '8',
-        'SEP' : '9',
-        'OCT' : '10',
-        'NOV' : '11',
-        'DEC' : '12'
-    }
-
-    parse_date = Date.split(" ")
-
-    month = monthToNum[parse_date[0]]
-    date = parse_date[1]
-    year = parse_date[2]
-
-    return month
 
 def nds_scrape(programs_file, unscraped_programs_file, driver_option):
     df = pd.read_csv(programs_file, index_col=0)
@@ -117,12 +71,9 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
                 time = time.replace(":", "_").strip()
                 am_pm = first_paragraph[1][:2].strip()
 
-                # save the text of the body to a text file in the directory below (e.g. news_broadcasts_2008/KARE/1/KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt)
+                # save the text of the body to a text file in the directory below 
+                # (e.g. news_broadcasts_2008/KARE/1/KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt)
                 filename = station + " " + date + " " + time + am_pm + " " + broadcast + ".txt"
-
-                # get the yeat and month
-                yearA = year_get(date_broadcast_split[0])
-                monthA = month_get(date_broadcast_split[0])
 
                 # store the scraing files into the locations that we want
                 filepath = os.path.join("../GFData/{}/".format(station), filename)
