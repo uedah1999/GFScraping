@@ -27,6 +27,8 @@ op.add_argument("--proxy-bypass-list=*");
 op.add_argument("--start-maximized");
 op.add_argument("--headless");
 
+username = 'REPLACE_THIS'
+password = 'REPLACE_THIS'
 nds_xls = '../GFData/Pt2.xls' # Excel file downloaded from 
 programs_file = '../GFData/Pt2_programs.csv' # csv file to store programs
 urls_file = '../GFData/Pt2_url_all.csv' # csv file to store all the urls from queries related to each program
@@ -34,6 +36,6 @@ failed_query_file = '../GFData/Pt2_failed_query.csv' # csv file to write which q
 unscraped_programs_file = '../GFData/Pt2_unscraped.csv' # csv file to store programs that need to be scraped.
 
 get_unique_program(nds_xls, programs_file)
-nds_crawl(programs_file, urls_file, failed_query_file, driver_option=op)
+nds_crawl(username, password, programs_file, urls_file, failed_query_file, driver_option=op)
 select_urls(urls_file, programs_file)
 nds_scrape(programs_file, unscraped_programs_file, driver_option=op)
