@@ -27,14 +27,15 @@ The scripts depend on NDS website having a specific structure, since they use XP
 For details of how to check XPaths of elements, check [this blog](https://yizeng.me/2014/03/23/evaluate-and-validate-xpath-css-selectors-in-chrome-developer-tools/) or other information on the Internet.
 
 ### Choose the directories to store the transcripts
-The project conducted in January 2021 was concerned with scraping a relatively small dataset of 442 transcripts from four stations. Thus, `nds_scraper.py` stores each transcript to the corresponding directory, determined solely based on station name (line 128)
+The project conducted in January 2021 was concerned with scraping a relatively small dataset of 442 transcripts from four stations. Thus, `nds_scraper.py` stores each transcript to the corresponding directory, determined solely based on station name.
 ```python
 filepath = os.path.join("../GFData/{}/".format(station), filename)
 ```
 Based on the purpose of scraping, the directories should change, so make sure to change the file paths appropriately. 
 
 ### Executing the scripts
-Execute `nds_main.py` after changing the following file paths:
+Execute `nds_main.py` after changing the following variables and file paths:
+- `username`, `password`: login information for NDS.
 - `nds_xls`: the Excel sheet downloaded in the above *Collect the necessary data* section.
 - `programs_file`: the csv file which stores each unique program in `nds_xls` with its Date, Time, Title, Source (station), Market (state & city / national), URL and Scraped status.
 - `urls_file`: the csv file which stores the URLs obtained from queries based on programs in `programs_file`. Each query on NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList) consists of States, Cities, Sources, and Program Date. Thus, `urls_file` includes the programs in `programs_file` and others that appear in one of the queries.
