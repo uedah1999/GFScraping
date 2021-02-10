@@ -18,8 +18,8 @@ def select_urls(all_urls_file, programs_file):
     for df in [df_prog, df_url]:
         df.sort_values(['Market', 'Source', 'Date', 'Time'], inplace=True, ignore_index=True)
 
-    # insert missing time and title
-    df_missing = df_url.loc[df_url['Time'].isnull() & df_url['Title'].notnull()]
+    # insert missing time and title if one of them is missing
+    df_missing = df_url.loc[df_url['Time'].isnull() | df_url['Title'].isnull()]
     for ind, row in df_missing.iterrows():
         prog_time, prog_title = get_Time_and_Title(row['URL'])
         df_url.loc[ind, 'Time'] = prog_time
