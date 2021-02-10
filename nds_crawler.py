@@ -40,7 +40,7 @@ def return_Source_xpath(Source):
         return '//*[@id="sources_listbox"]/li[25]'
 
     if Source == 'KFXA':
-        return '//*[@id="sources_listbox"]/li[3]'
+        return '//*[@id="sources_listbox"]/li[2]'
 
     if Source == 'WMSN':
         return '//*[@id="sources_listbox"]/li[11]'
@@ -49,7 +49,7 @@ def return_Source_xpath(Source):
         return '//*[@id="sources_listbox"]/li[10]'
 
     if Source == 'KGAN':
-        return '//*[@id="sources_listbox"]/li[5]'
+        return '//*[@id="sources_listbox"]/li[4]'
 
 def nds_crawl(username, password, programs_file, urls_file, failed_query_file, driver_option):
     Programs_List = pd.read_csv(programs_file)
@@ -187,5 +187,5 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
     df_urls.to_csv(urls_file, index=False)
 
     # writing queries that encountered a fatal failure
-    df_failed = pd.DataFrame(failed_query, columns=['Date', 'Souce', 'Market'])
+    df_failed = pd.DataFrame(failed_query, columns=['Date', 'Source', 'Market'])
     df_failed.to_csv(failed_query_file, index=False)
