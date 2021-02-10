@@ -1,5 +1,5 @@
 # GFScraping
-The scripts are written by Hiromichi Ueda '21, working for [the DataSquad](https://datasquad.at.sites.carleton.edu). They were last executed in January 2021.   
+The scripts are written by Hiromichi Ueda '21, working for [the DataSquad](https://datasquad.at.sites.carleton.edu). They were last executed in February 2021.   
 ![alt text](./DataSquad_logo.png)   
 This repository contains files to crawl and scrape news broadcast transcripts as `.txt` files, given an excel sheet from [News Data Service](https://newsdataservice.com) (NDS).
 
@@ -29,9 +29,9 @@ For details of how to check XPaths of elements, check [this blog](https://yizeng
 ### Choose the directories to store the transcripts
 The project conducted in January 2021 was concerned with scraping a relatively small dataset of 442 transcripts from four stations. Thus, `nds_scraper.py` stores each transcript to the corresponding directory, determined solely based on station name.
 ```python
-filepath = os.path.join("../GFData/{}/".format(station), filename)
+file_dir = '../GFData/{}'.format(station)
 ```
-Based on the purpose of scraping, the directories should change, so make sure to change the file paths appropriately. 
+Based on the purpose of scraping, the directories should change, so make adjustments as needed. 
 
 ### Executing the scripts
 Execute `nds_main.py` after changing the following variables and file paths:
@@ -42,9 +42,8 @@ Execute `nds_main.py` after changing the following variables and file paths:
 - `failed_query_file`: the csv file which stores the failed queries. More on failed queries in the *Scripts Logic* section.
 - `unscraped_programs_file`: the csv file which stores the programs that were not scraped after the execution of the scripts. 
 
-If you need to check which programs need scraping, ***make sure to check `unscraped_programs_file`***. It is essential to the scripts that the date of each program is stored in ***yyyy-mm-dd format*** in all of the four csv files (e.g. *2020-06-06*). By default, Excel reformats this to *(m)m-(d)d-yy* format (e.g. *6/6/20*); thus, ***avoid manually modifying and saving the csv files***.
-
-Execution will likely take quite a while. If you want to separate the process, you can commenting out some of the last four lines. However, make sure to call the four functions in the original order:
+Each csv file has a header such as Date, Time, Title, Source (broadcast station), Market (state and city of the station), as needed by the corresponding functions.   
+Execution will likely take quite a while. If you want to separate the process, you can comment out some of the last four lines. However, make sure to call the four functions in the original order:
 ```python
 get_unique_program(nds_xls, programs_file)
 nds_crawl(programs_file, urls_file, failed_query_file, driver_option=op)
@@ -52,13 +51,15 @@ select_urls(urls_file, programs_file)
 nds_scrape(programs_file, driver_option=op)
 ```
 
+If you need to check which programs need scraping, ***make sure to check `unscraped_programs_file`***. It is essential to the scripts that the date of each program is stored in ***yyyy-mm-dd format*** in all of the four csv files (e.g. *2020-06-06*). By default, Excel reformats this to *(m)m-(d)d-yy* format (e.g. *6/6/20*); thus, ***avoid manually modifying and saving the csv files***.
+
 ## Updates of January 2021
 The original scripts were written in June 2019, revised in July 2020, but had issues of 1) scraping unnecessary transcripts, and 2) missing necessary transcripts. Main updates of January 2021 include:
 - Modified the crawling and scraping step to run Chrome WebDriver in background. 
 - Transferred all scripts to Python in order to execute the whole process with a single file `nds_main.py`
 - For each broadcast in the original excel file, the output csv file indicates
     1. whether the URL was collected
-    2. whether the transcript was scraped  
+    1. whether the transcript was scraped  
 - The crawler of the URLs accounts for the fact that some queries on NDS "fail" by taking too long.
 
 ## Scripts Logic
@@ -83,19 +84,20 @@ Some queries succeed on some occasions and fail on others, and you can run the `
 
 ### `select_urls.py`
 For the programs of interest in `programs_file`, copy the URLs to their transcripts in `urls_file`. This script and `nds_crawler.py` are kept as separate files, since collecting the URLs from each query is already a complicated enough process. 
-- From the above two files, programs in `programs_file` and `urls_file` are sorted in the same order of Market, Source, Date then Time. **That the two files are ordered is essential to this script.**
 - Some programs in `programs_file` are missing in `urls_file` (from failed queries) and vice versa. 
 - Some programs in `urls_file` come with missing Time and Title.
-Thus, the script takes into account the above three points:
+
+Thus, the script takes into account the above points:
+1. Sort the programs in `programs_file` and `urls_file` in the same order of Market, Source, Date then Time. 
 1. For each program in `urls_file` with missing Time and Title, fill in the two entries by parsing the obtained URL.
-2. For each program in `programs_file`, check if its URL is in `urls_file` by comparing the unique identifier (Date, Time, Title, Source, Market). If its URL is found, copy it to *URL* column; otherwise, keep the entry empty.
-3. Initialize *Scraped* column to all `False`.
+1. For each program in `programs_file`, check if its URL is in `urls_file` by comparing the unique identifier (Date, Time, Title, Source, Market). If its URL is found, copy it to *URL* column; otherwise, keep the entry empty.
+1. Initialize *Scraped* column to all `False`.
 
 ### `nds_scraper.py`
 For each program in `programs_file`, try scraping the transcript from the URL obtained in the above process
 1. If the URL is missing, or if the transcript has already been scraped, then go to the next program
-2. The transcript is successfully scraped, store the `.txt` file to appropriate path and update *Scraped* column to `True`
-3. If scraping the transcript encounters some error, leave the *Scraped* column to `False`
+1. The transcript is successfully scraped, store the `.txt` file to appropriate path and update *Scraped* column to `True`
+1. If scraping the transcript encounters some error, leave the *Scraped* column to `False`
 
 For programs that were not scraped due to a missing URL or some error, write them as a csv file in `unscraped_programs_file`.
 
