@@ -7,7 +7,7 @@ import csv
 
 def get_Time_and_Title(nds_url_str):
     prog_datetime = nds_url_str.split('&')[2].split('=')[-1]
-    prog_title = nds_url_str.split('&')[4].split('=')[-1].replace('%20', ' ')
+    prog_title = nds_url_str.split('&')[4].split('=')[-1].replace('%20', ' ').replace('%40', '@')
     return prog_datetime[11:], prog_title
 
 def select_urls(all_urls_file, programs_file):
