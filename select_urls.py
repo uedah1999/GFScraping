@@ -14,6 +14,9 @@ def select_urls(all_urls_file, programs_file):
     # df_prog has column names Date, Time, Title, Source, Market, URL, Scraped in this order   
     df_prog = pd.read_csv(programs_file)
     df_url = pd.read_csv(all_urls_file)
+    # sort two dataframes in the same order
+    for df in [df_prog, df_url]:
+        df.sort_values(['Market', 'Source', 'Date', 'Time'], inplace=True, ignore_index=True)
 
     # insert missing time and title
     df_missing = df_url.loc[df_url['Time'].isnull() & df_url['Title'].notnull()]
