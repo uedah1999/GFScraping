@@ -72,18 +72,26 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
                 time = time.replace(":", "_").strip()
                 am_pm = first_paragraph[1][:2].strip()
 
-                # save the text of the body to a text file in the directory below 
-                # (e.g. news_broadcasts_2008/KARE/1/KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt)
+                # save the text of the body to a text file in the specified directory
+                # filename = e.g. 'KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt'
                 filename = station + " " + date + " " + time + am_pm + " " + broadcast + ".txt"
 
-                # store the scraing files into the locations that we want
-                filepath = os.path.join("../GFData/{}/".format(station), filename)
+                # specify directory
+                file_dir = '../GFData/{}'.format(station)
+                if not os.path.exists(file_dir):
+                    os.makedirs(file_dir)
+                filepath = os.path.join(file_dir, filename)
                 file = open(filepath, "w")
                 file.write(body)
                 file.close()
                 df.loc[index, 'Scraped'] = True
             except:
                 print("failed to scrape text from index {}".format(index))
+
+        if (index + 1)%50==0: # update csv file after 50 iterations
+            df_unscraped = df[~df['Scraped']] # programs that were not scraped
+            df.to_csv(programs_file, index=False)
+            df_unscraped.to_csv(unscraped_programs_file, index=False)        
 
     df_unscraped = df[~df['Scraped']] # programs that were not scraped
     df.to_csv(programs_file, index=False)
