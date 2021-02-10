@@ -1,7 +1,8 @@
 # GFScraping
 The scripts are written by Hiromichi Ueda '21, working for [the DataSquad](https://datasquad.at.sites.carleton.edu). They were last executed in February 2021.   
 ![alt text](./DataSquad_logo.png)   
-This repository contains files to crawl and scrape news broadcast transcripts as `.txt` files, given an excel sheet from [News Data Service](https://newsdataservice.com) (NDS).
+This repository contains `.py` files to crawl and scrape news broadcast transcripts as `.txt` files, given an excel sheet from [News Data Service](https://newsdataservice.com) (NDS).   
+In February 2021, a Colab notebook was added, which downloads videos of broadcast as mp4 files into Google Drive, given confirmation emails from NDS about clip request. 
 
 ## Requirement 
 macOS Big Sur is the only environment in which the scripts have been executed
@@ -14,7 +15,7 @@ macOS Big Sur is the only environment in which the scripts have been executed
     - install Chrome and follow this [version selection guide](https://chromedriver.chromium.org/downloads/version-selection) to download the collect version
     - copy the `chromedriver.exe` file to `/usr/local/bin`
 
-## How to use the scripts
+## How to use the scripts for transcripts
 ### Collect the necessary data
 1. Log into [NDS portal](https://portal.newsdataservice.com/), using relevant account.
 2. Under *Coverage* on the NDS website, select the folder of broadcasts you want to scrape. 
@@ -52,6 +53,9 @@ nds_scrape(programs_file, driver_option=op)
 ```
 
 If you need to check which programs need scraping, ***make sure to check `unscraped_programs_file`***. It is essential to the scripts that the date of each program is stored in ***yyyy-mm-dd format*** in all of the four csv files (e.g. *2020-06-06*). By default, Excel reformats this to *(m)m-(d)d-yy* format (e.g. *6/6/20*); thus, ***avoid manually modifying and saving the csv files***.
+
+## How to use the Colab notebook for video clips
+Upload all the emails from NDS as `.xml` files to a Google Driver folder, and adjust the filepaths accordingly. The notebook is similar to `nds_scraper.py`, thus a detailed script logic is omitted here.
 
 ## Updates of January 2021
 The original scripts were written in June 2019, revised in July 2020, but had issues of 1) scraping unnecessary transcripts, and 2) missing necessary transcripts. Main updates of January 2021 include:
