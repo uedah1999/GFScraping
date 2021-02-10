@@ -26,12 +26,12 @@ def select_urls(all_urls_file, programs_file):
 
     search_start = 0
     for i in range(df_prog.shape[0]):
-        ith_row_id = df_prog.iloc[i,:5].values 
+        ith_row_id = df_prog.loc[i, ['Date', 'Time', 'Title', 'Source', 'Market']].values 
         j = search_start
         while j < df_url.shape[0]:
-            jth_row_id = df_url.iloc[j,:5].values
+            jth_row_id = df_url.loc[j, ['Date', 'Time', 'Title', 'Source', 'Market']].values
             if all(ith_row_id == jth_row_id):
-                df_prog.iloc[i,5] = df_url.iloc[j,5] #copy url
+                df_prog.loc[i, 'URL'] = df_url.loc[j, 'URL'] #copy url
                 search_start = j+1
                 break
             else:
