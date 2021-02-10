@@ -4,7 +4,6 @@
 # Revised by Hiromichi Ueda in January 2021
 
 import pandas as pd
-import csv
 import time
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -53,7 +52,7 @@ def return_Source_xpath(Source):
         return '//*[@id="sources_listbox"]/li[5]'
 
 def nds_crawl(username, password, programs_file, urls_file, failed_query_file, driver_option):
-    Programs_List = pd.read_csv(programs_file, index_col=0)
+    Programs_List = pd.read_csv(programs_file)
     # The three columns identify exactly what is needed to make a query in NDS
     Query_List = Programs_List.loc[:, ['Date', 'Source', 'Market']].drop_duplicates().reset_index(drop=True)
 
@@ -61,6 +60,7 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
     failed_query = []
     query_idx = 0
     num_query = Query_List.shape[0]
+    print("make {} total queries".format(num_query))
 
     while query_idx < num_query: # query is not completed
         Driver_Success = True # Driver has not encounterd a fatal failure
@@ -160,33 +160,32 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
                             # if the next link does not exist, set b to false and exist query
                             b = False
 
-                    if len(programs) > 0: # some urls were collected
-                        print("num links collected: " + str(len(programs)))
-                        time.sleep(3)
-                        
-                        Query_Success = True # the query attempt succeeded
+                    print("num links collected: " + str(len(programs)))
+                    time.sleep(3)
+                    
+                    Query_Success = True # the query attempt ran without error
+                    if len(programs) > 0:
                         links = links + programs # add the programs from this success query
+                    else:
+                        failed_query.append([Date_str, Source, Market]) # no program is found
 
                 except: # the query attempt has failed
                     num_failed_attempt += 1
 
             if not Query_Success: # all 10 attempts failed
                 Driver_Success = False # encountered a fatal failure
-                failed_query.append([Market, Source, Date_str])
+                failed_query.append([Date_str, Source, Market])
                 print("query has failed. quit and restart webdriver")
                 driver.quit()
             
             query_idx += 1 # move on to the next query
     driver.quit()
+    print("query complete")
 
     # write obtained URLs to a csv file
-    with open(urls_file, mode='w', newline="") as link_file:
-        link_writer = csv.writer(link_file)
-        link_writer.writerows(links)
+    df_urls = pd.DataFrame(links, columns=['Date', 'Time', 'Title', 'Source', 'Market', 'URL'])
+    df_urls.to_csv(urls_file, index=False)
 
     # writing queries that encountered a fatal failure
-    with open(failed_query_file, mode='w', newline="") as failed_file:
-        failed_writer = csv.writer(failed_file)
-        failed_writer.writerow(i for i in ['', 'Market', 'Source', 'Date'])
-        for j in range(len(failed_query)):
-            failed_writer.writerow([j] + failed_query[j])
+    df_failed = pd.DataFrame(failed_query, columns=['Date', 'Souce', 'Market'])
+    df_failed.to_csv(failed_query_file, index=False)

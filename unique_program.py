@@ -2,7 +2,6 @@
 # returns unique broadcast as a csv file.
 # Written by Hiromichi Ueda in January 2021
 import pandas as pd
-import csv
 
 # convert "8:00 AM CT" to "08:00AM CT"
 def format_time(time_str):
@@ -20,4 +19,4 @@ def get_unique_program(nds_xls, programs_file):
     df['Time'] = df['Time'].apply(format_time)
     df_sorted = df.sort_values(['Market', 'Source', 'Date', 'Time'])
     df_sorted.reset_index(drop=True, inplace=True)
-    df_sorted.to_csv(programs_file)
+    df_sorted.to_csv(programs_file, index=False)

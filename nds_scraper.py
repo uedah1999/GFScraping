@@ -36,12 +36,13 @@ def return_Date_str(Date):
     date = parse_date[1]
     year = parse_date[2]
 
-    return year + "-" + month + "-" + date, month
+    return year + "-" + month + "-" + date
 
 def nds_scrape(programs_file, unscraped_programs_file, driver_option):
-    df = pd.read_csv(programs_file, index_col=0)
+    df = pd.read_csv(programs_file)
     driver = webdriver.Chrome(options=driver_option)
 
+    print("scrape total of {} indices".format(df.shape[0]))
     # iterate through all of the links
     for index, row in df.iterrows():
         if pd.isna(row['URL']):
@@ -62,7 +63,7 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
                 # extract date and broadcast
                 date_broadcast = split[1]
                 date_broadcast_split = date_broadcast.split("  ")
-                date, month = return_Date_str(date_broadcast_split[0])
+                date = return_Date_str(date_broadcast_split[0]) #2008-7-28
                 broadcast = date_broadcast_split[1].strip()
 
                 # extract the first timestamp
@@ -85,6 +86,6 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
                 print("failed to scrape text from index {}".format(index))
 
     df_unscraped = df[~df['Scraped']] # programs that were not scraped
-    df.to_csv(programs_file)
-    df_unscraped.to_csv(unscraped_programs_file)
+    df.to_csv(programs_file, index=False)
+    df_unscraped.to_csv(unscraped_programs_file, index=False)
     driver.quit()

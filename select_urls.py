@@ -12,15 +12,15 @@ def get_Time_and_Title(nds_url_str):
 
 def select_urls(all_urls_file, programs_file):
     # df_prog has column names Date, Time, Title, Source, Market, URL, Scraped in this order   
-    df_prog = pd.read_csv(programs_file, index_col=0)
-    df_url = pd.read_csv(all_urls_file, header=None)
+    df_prog = pd.read_csv(programs_file)
+    df_url = pd.read_csv(all_urls_file)
 
     # insert missing time and title
-    df_missing = df_url.loc[df_url[1].isnull() & df_url[5].notnull()]
+    df_missing = df_url.loc[df_url['Time'].isnull() & df_url['Title'].notnull()]
     for ind, row in df_missing.iterrows():
-        prog_time, prog_title = get_Time_and_Title(row[5])
-        df_url.loc[ind, 1] = prog_time
-        df_url.loc[ind, 2] = prog_title
+        prog_time, prog_title = get_Time_and_Title(row['URL'])
+        df_url.loc[ind, 'Time'] = prog_time
+        df_url.loc[ind, 'Title'] = prog_title
 
     df_prog['URL'] = np.nan
 
@@ -38,5 +38,5 @@ def select_urls(all_urls_file, programs_file):
                 j += 1
 
     df_prog['Scraped'] = False
-    df_prog.to_csv(programs_file)
-    df_missing.to_csv(all_urls_file, header=False, index=False)
+    df_prog.to_csv(programs_file, index=False)
+    df_missing.to_csv(all_urls_file, index=False)
