@@ -1,8 +1,11 @@
 # This file is used to iterate through each url,
 # scrape the text within the url, and store it in the directory we want.
-# Written by Nobuaki Masaki in June 2019
-# Revised by Xinyan Xiang in July 2020
-# Revised by Hiromichi Ueda in January 2021
+# Written by Nobuaki Masaki '20 in June 2019
+# Revised by Xinyan Xiang '22 in July 2020
+# Revised by Hiromichi Ueda '21 in February 2021
+# 
+# Last execution in macOS Big Sur in February 2021 
+# with Python 3.8.3, Selenium 3.141.0, Pandas 1.2.0
 
 import pandas as pd
 import os
@@ -12,7 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
-# this function formats the date so that it can be used for directory names
+# format the date to be used for directory names
 def return_Date_str(Date):
 
     monthToNum = {
@@ -45,7 +48,7 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
     print("scrape total of {} indices".format(df.shape[0]))
     # iterate through all of the links
     for index, row in df.iterrows():
-        if pd.isna(row['URL']):
+        if row['URL'] == '':
             print("index {} has missing URL".format(index))
         elif row['Scraped']:
             print("index {} has already been scraped".format(index))

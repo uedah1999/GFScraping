@@ -1,10 +1,12 @@
 # Given all the links from a query and the list of required programs,
 # returns a csv file of just the required urls
-# Written by Hiromichi Ueda in January 2021
-import numpy as np
+# Written by Hiromichi Ueda '21 in January 2021
+# 
+# Last execution in macOS Big Sur in January 2021 
+# with Python 3.8.3, Pandas 1.2.0
 import pandas as pd
-import csv
 
+# parse url to get time and title of the program
 def get_Time_and_Title(nds_url_str):
     prog_datetime = nds_url_str.split('&')[2].split('=')[-1]
     prog_title = nds_url_str.split('&')[4].split('=')[-1].replace('%20', ' ').replace('%40', '@')
@@ -25,7 +27,7 @@ def select_urls(all_urls_file, programs_file):
         df_url.loc[ind, 'Time'] = prog_time
         df_url.loc[ind, 'Title'] = prog_title
 
-    df_prog['URL'] = np.nan
+    df_prog['URL'] = ''
 
     search_start = 0
     for i in range(df_prog.shape[0]):
@@ -40,6 +42,5 @@ def select_urls(all_urls_file, programs_file):
             else:
                 j += 1
 
-    df_prog['Scraped'] = False
     df_prog.to_csv(programs_file, index=False)
     df_missing.to_csv(all_urls_file, index=False)

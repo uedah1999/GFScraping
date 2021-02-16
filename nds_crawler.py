@@ -1,7 +1,11 @@
-# This code is used to downlowad all the stories' url links on to an excel spreadsheet
-# Written by Nobuaki Masaki in June 2019
-# Revised by Xinyan Xiang in July 2020
-# Revised by Hiromichi Ueda in January 2021
+# For each unique combination of Date, Source, Market columns in programs_file csv, 
+# make a query and write the results to urls_file csv.
+# Written by Nobuaki Masaki '20 in June 2019
+# Revised by Xinyan Xiang '22 in July 2020
+# Revised by Hiromichi Ueda '21 in February 2021
+# 
+# Last execution in macOS Big Sur in February 2021 
+# with Python 3.8.3, Selenium 3.141.0, Pandas 1.2.0
 
 import pandas as pd
 import time
@@ -155,7 +159,7 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
                             Title_str = driver.find_element_by_xpath('//*[@id="results"]/table/tbody/tr[' + str(i) + ']/td[4]').text
 
                             # attach the program identification and URL to the nested list
-                            programs.append([Date_str, Time_str, Title_str, Source, Market, url])
+                            programs.append([Date_str, Time_str, Title_str, Source, Market, url, False])
                         except:
                             # if the next link does not exist, set b to false and exist query
                             b = False
@@ -167,14 +171,14 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
                     if len(programs) > 0:
                         links = links + programs # add the programs from this success query
                     else:
-                        failed_query.append([Date_str, Source, Market]) # no program is found
+                        failed_query.append([Date_str, Source, Market, 'no link']) # no program is found
 
                 except: # the query attempt has failed
                     num_failed_attempt += 1
 
             if not Query_Success: # all 10 attempts failed
                 Driver_Success = False # encountered a fatal failure
-                failed_query.append([Date_str, Source, Market])
+                failed_query.append([Date_str, Source, Market, 'load error'])
                 print("query has failed. quit and restart webdriver")
                 driver.quit()
             
@@ -183,9 +187,9 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
     print("query complete")
 
     # write obtained URLs to a csv file
-    df_urls = pd.DataFrame(links, columns=['Date', 'Time', 'Title', 'Source', 'Market', 'URL'])
+    df_urls = pd.DataFrame(links, columns=['Date', 'Time', 'Title', 'Source', 'Market', 'URL', 'Scraped'])
     df_urls.to_csv(urls_file, index=False)
 
     # writing queries that encountered a fatal failure
-    df_failed = pd.DataFrame(failed_query, columns=['Date', 'Source', 'Market'])
+    df_failed = pd.DataFrame(failed_query, columns=['Date', 'Source', 'Market', 'Error'])
     df_failed.to_csv(failed_query_file, index=False)
