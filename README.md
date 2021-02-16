@@ -8,14 +8,13 @@ In February 2021, a Colab notebook was added, which downloads videos of broadcas
 macOS Big Sur is the only environment in which the scripts have been executed
 - [**Selenium**](https://selenium-python.readthedocs.io) (tested with Selenium 3.141.0)
 - Python3 (tested with Python 3.8.3)
-- NumPy (tested with NumPy 1.19.4)
 - Pandas (tested with Pandas 1.2.0)
 - ChromeDriver
     - **DO NOT USE** `pip install chromedriver-binary` 
     - install Chrome and follow this [version selection guide](https://chromedriver.chromium.org/downloads/version-selection) to download the collect version
     - copy the `chromedriver.exe` file to `/usr/local/bin`
 
-## How to use the scripts for transcripts
+## How to collect transcripts for all programs in a folder from NDS
 ### Collect the necessary data
 1. Log into [NDS portal](https://portal.newsdataservice.com/), using relevant account.
 2. Under *Coverage* on the NDS website, select the folder of broadcasts you want to scrape. 
@@ -53,6 +52,18 @@ nds_scrape(programs_file, driver_option=op)
 ```
 
 If you need to check which programs need scraping, ***make sure to check `unscraped_programs_file`***. It is essential to the scripts that the date of each program is stored in ***yyyy-mm-dd format*** in all of the four csv files (e.g. *2020-06-06*). By default, Excel reformats this to *(m)m-(d)d-yy* format (e.g. *6/6/20*); thus, ***avoid manually modifying and saving the csv files***.
+
+## How to collect transcripts for all programs from specific stations on specific dates
+First, follow the **Check the XPaths of the script** and **Choose the directories to store the transcripts** sections above.  
+Then, create a csv file with columns Date, Source and Market: for Market, look at `nds_crawler.py` to check the desired form of City/State combination; for Date, use yyyy-mm-dd format.
+| Date | Source | Market |
+| ---- | ------ | ------ |
+| 2008-10-05 | WMSN | Madison, WI |
+| 2008-10-05 | WKOW | Madison, WI |
+| 2016-08-01 | KFXA | Cedar Rapids-Waterloo-Dubuque, IA |
+
+Use this csv as `programs_file` and ran `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not save this csv file, since values in 'Scraped' column might become string value, not boolean.***
+Now, use this new csv with 7 columns as `programs_file`, and ran `nds_scrape()`.
 
 ## How to use the Colab notebook for video clips
 Upload all the emails from NDS as `.xml` files to a Google Driver folder, and adjust the filepaths accordingly. The notebook is similar to `nds_scraper.py`, thus a detailed script logic is omitted here.
