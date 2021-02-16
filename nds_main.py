@@ -10,7 +10,6 @@ from select_urls import select_urls
 from nds_scraper import nds_scrape
 
 import pandas as pd
-import csv
 import os
 
 import time
