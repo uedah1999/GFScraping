@@ -62,8 +62,8 @@ Then, create a csv file with columns Date, Source and Market: for Market, look a
 | 2008-10-05 | WKOW | Madison, WI |
 | 2016-08-01 | KFXA | Cedar Rapids-Waterloo-Dubuque, IA |
 
-Use this csv as `programs_file` and ran `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not save this csv file, since values in 'Scraped' column might become string value, not boolean.***
-Now, use this new csv with 7 columns as `programs_file`, and ran `nds_scrape()`.
+Use this csv as `programs_file` and run `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not save this csv file, since values in 'Scraped' column might become string value, not boolean.***
+Now, use this new csv with 7 columns as `programs_file`, and run `nds_scrape()`.
 
 ## How to use the Colab notebook for video clips
 Upload all the emails from NDS as `.xml` files to a Google Driver folder, and adjust the filepaths accordingly. The notebook is similar to `nds_scraper.py`, thus a detailed script logic is omitted here.
