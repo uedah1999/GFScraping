@@ -54,15 +54,14 @@ nds_scrape(programs_file, driver_option=op)
 If you need to check which programs need scraping, ***make sure to check `unscraped_programs_file`***. It is essential to the scripts that the date of each program is stored in ***yyyy-mm-dd format*** in all of the four csv files (e.g. *2020-06-06*). By default, Excel reformats this to *(m)m-(d)d-yy* format (e.g. *6/6/20*); thus, ***avoid manually modifying and saving the csv files***.
 
 ## How to collect transcripts for all programs from specific stations on specific dates
-First, follow the **Check the XPaths of the script** and **Choose the directories to store the transcripts** sections above.  
-Then, create a csv file with columns Date, Source and Market: for Market, look at `nds_crawler.py` to check the desired form of City/State combination; for Date, use yyyy-mm-dd format.
+First, follow the **Check the XPaths of the script** and **Choose the directories to store the transcripts** sections above. Then, create a csv file with columns Date, Source and Market: for Market, look at `nds_crawler.py` to check the desired form of City/State combination; for Date, use yyyy-mm-dd format.
 | Date | Source | Market |
 | ---- | ------ | ------ |
 | 2008-10-05 | WMSN | Madison, WI |
 | 2008-10-05 | WKOW | Madison, WI |
 | 2016-08-01 | KFXA | Cedar Rapids-Waterloo-Dubuque, IA |
 
-Use this csv as `programs_file` and run `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not save this csv file, since values in 'Scraped' column might become string value, not boolean.***
+Use this csv as `programs_file` and run `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not manually edit and save this csv file, since values in 'Scraped' column might become string value, not boolean.***
 Now, use this new csv with 7 columns as `programs_file`, and run `nds_scrape()`.
 
 ## How to use the Colab notebook for video clips
@@ -71,7 +70,7 @@ Upload all the emails from NDS as `.xml` files to a Google Driver folder, and ad
 ## Updates of January 2021
 The original scripts were written in June 2019, revised in July 2020, but had issues of 1) scraping unnecessary transcripts, and 2) missing necessary transcripts. Main updates of January 2021 include:
 - Modified the crawling and scraping step to run Chrome WebDriver in background. 
-- Transferred all scripts to Python in order to execute the whole process with a single file `nds_main.py`
+- Transferred some scripts to Python in order to execute the whole process with a single file `nds_main.py`
 - For each broadcast in the original excel file, the output csv file indicates
     1. whether the URL was collected
     1. whether the transcript was scraped  
@@ -89,13 +88,12 @@ This script loads the excel file `nds_xls` downloaded from NDS, and creates a cs
 ### `nds_crawler.py`
 This script crawls / collects the URLs for the programs in `programs_file`. 
 1. Identify the unique (Date, Source, Market) entries in `programs_file`
-2. Conduct a query on NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList), using each unique triplet:
+1. Conduct a query on NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList), using each unique triplet:
     - For each program in the query results, copy its Date, Time, Title, Source, Market and its URL into `urls_file`
-    - The script waits for 20 seconds for the query results to load. If the query results do not show up after 20 seconds, or if no URL is copied from the query, the query is classified as failure.
+    - The script waits for 20 seconds for the query results to load. If the query results do not show up after 20 seconds, the query is classified as failure.
     - The script allows at most 10 failures for each query. If 10 failures are counted, the script ignores that query, and restarts from the next query.
-3. Write to `failed_query_file` each query that failed 10 times in step 2.
-
-Some queries succeed on some occasions and fail on others, and you can run the `nds_crawl(programs_file, urls_file, failed_query_file, driver_option)` function by updating `programs_file` to `failed_query_file`
+1. Initialize the entries in *Scraped* column of `programs_file` to `False`
+1. Write to `failed_query_file` each query that failed 10 times in step 2 with *Error* entry `load error`, and each query that returned no url with *Error* entry `no link`
 
 ### `select_urls.py`
 For the programs of interest in `programs_file`, copy the URLs to their transcripts in `urls_file`. This script and `nds_crawler.py` are kept as separate files, since collecting the URLs from each query is already a complicated enough process. 
@@ -103,15 +101,13 @@ For the programs of interest in `programs_file`, copy the URLs to their transcri
 - Some programs in `urls_file` come with missing Time and Title.
 
 Thus, the script takes into account the above points:
-1. Sort the programs in `programs_file` and `urls_file` in the same order of Market, Source, Date then Time. 
 1. For each program in `urls_file` with missing Time and Title, fill in the two entries by parsing the obtained URL.
 1. For each program in `programs_file`, check if its URL is in `urls_file` by comparing the unique identifier (Date, Time, Title, Source, Market). If its URL is found, copy it to *URL* column; otherwise, keep the entry empty.
-1. Initialize *Scraped* column to all `False`.
 
 ### `nds_scraper.py`
 For each program in `programs_file`, try scraping the transcript from the URL obtained in the above process
-1. If the URL is missing, or if the transcript has already been scraped, then go to the next program
-1. The transcript is successfully scraped, store the `.txt` file to appropriate path and update *Scraped* column to `True`
+1. If the URL is missing, or if the transcript has already been scraped, then skip the program
+1. If the transcript is successfully scraped, store the `.txt` file to appropriate path and update *Scraped* column to `True`
 1. If scraping the transcript encounters some error, leave the *Scraped* column to `False`
 
 For programs that were not scraped due to a missing URL or some error, write them as a csv file in `unscraped_programs_file`.

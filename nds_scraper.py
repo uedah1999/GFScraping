@@ -15,7 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
-# format the date to be used for directory names
+# format the date for filename
 def return_Date_str(Date):
 
     monthToNum = {
@@ -75,7 +75,7 @@ def nds_scrape(programs_file, unscraped_programs_file, driver_option):
                 time = time.replace(":", "_").strip()
                 am_pm = first_paragraph[1][:2].strip()
 
-                # save the text of the body to a text file in the specified directory
+                # save the text of the body to a .txt file in the specified directory
                 # filename = e.g. 'KARE 2008-7-28 04_00_02PM KARE 11 AT 4.txt'
                 filename = station + " " + date + " " + time + am_pm + " " + broadcast + ".txt"
 

@@ -32,15 +32,11 @@ def select_urls(all_urls_file, programs_file):
     search_start = 0
     for i in range(df_prog.shape[0]):
         ith_row_id = df_prog.loc[i, ['Date', 'Time', 'Title', 'Source', 'Market']].values 
-        j = search_start
-        while j < df_url.shape[0]:
+        for j in range(df_url.shape[0]):
             jth_row_id = df_url.loc[j, ['Date', 'Time', 'Title', 'Source', 'Market']].values
             if all(ith_row_id == jth_row_id):
                 df_prog.loc[i, 'URL'] = df_url.loc[j, 'URL'] #copy url
-                search_start = j+1
                 break
-            else:
-                j += 1
 
     df_prog.to_csv(programs_file, index=False)
     df_missing.to_csv(all_urls_file, index=False)
