@@ -1,5 +1,5 @@
 # GFScraping
-The scripts are written by Hiromichi Ueda '21, working for [the DataSquad](https://datasquad.at.sites.carleton.edu). They were last executed in February 2021.   
+The scripts are written by Hiromichi Ueda '21, working for [the DataSquad](https://datasquad.at.sites.carleton.edu). They were last executed in March 2021.   
 ![alt text](./DataSquad_logo.png)   
 This repository contains `.py` files to crawl and scrape news broadcast transcripts as `.txt` files, given an excel sheet from [News Data Service](https://newsdataservice.com) (NDS).   
 In February 2021, a Colab notebook was added, which downloads videos of broadcast as mp4 files into Google Drive, given confirmation emails from NDS about clip request. 
@@ -13,6 +13,7 @@ macOS Big Sur is the only environment in which the scripts have been executed
     - **DO NOT USE** `pip install chromedriver-binary` 
     - install Chrome and follow this [version selection guide](https://chromedriver.chromium.org/downloads/version-selection) to download the collect version
     - copy the `chromedriver.exe` file to `/usr/local/bin`
+    - refer to the version guide if it has been a while since the last execution, because Chrome might receive automatic update
 
 ## How to collect transcripts for all programs in a folder from NDS
 ### Collect the necessary data
@@ -22,8 +23,8 @@ macOS Big Sur is the only environment in which the scripts have been executed
 
 Currently, NDS exports all selected folder as **a single excel sheet**.
 
-### Check the XPaths of the scripts
-The scripts depend on NDS website having a specific structure, since they use XPath of the website. In particular, you need to ensure that the XPaths in `return_Market_xpath(Market)`, `return_Source_xpath(Source)` functions in `nds_crawler.py` are up to date with the States, etc. selector on the NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList).   
+### Check the XPaths on NDS website
+The scripts depend on NDS website having a specific structure, since they use XPath of the website. In particular, you need to ensure that the XPaths in `return_Market_xpath(Market)`, `return_Source_xpath(Source)` functions in `nds_crawler.py` are up to date with the States, etc. selector on the NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList). In addition, make sure that `return_Source_xpath(Source)` function contains all the stations to be scraped.    
 For details of how to check XPaths of elements, check [this blog](https://yizeng.me/2014/03/23/evaluate-and-validate-xpath-css-selectors-in-chrome-developer-tools/) or other information on the Internet.
 
 ### Choose the directories to store the transcripts
@@ -33,9 +34,9 @@ file_dir = '../GFData/{}'.format(station)
 ```
 Based on the purpose of scraping, the directories should change, so make adjustments as needed. 
 
-### Executing the scripts
+### Execute the scripts
 Execute `nds_main.py` after changing the following variables and file paths:
-- `username`, `password`: login information for NDS.
+- `username`, `password`: login information for NDS. If the values are default, the scripts quit with an error message.
 - `nds_xls`: the Excel sheet downloaded in the above *Collect the necessary data* section.
 - `programs_file`: the csv file which stores each unique program in `nds_xls` with its Date, Time, Title, Source (station), Market (state & city / national), URL and Scraped status.
 - `urls_file`: the csv file which stores the URLs obtained from queries based on programs in `programs_file`. Each query on NDS *Broadcast Content* [page](https://portal.newsdataservice.com/ProgramList) consists of States, Cities, Sources, and Program Date. Thus, `urls_file` includes the programs in `programs_file` and others that appear in one of the queries.
@@ -61,8 +62,8 @@ First, follow the **Check the XPaths of the script** and **Choose the directorie
 | 2008-10-05 | WKOW | Madison, WI |
 | 2016-08-01 | KFXA | Cedar Rapids-Waterloo-Dubuque, IA |
 
-Use this csv as `programs_file` and run `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not manually edit and save this csv file, since values in 'Scraped' column might become string value, not boolean.***
-Now, use this new csv with 7 columns as `programs_file`, and run `nds_scrape()`.
+Use this csv as `programs_file` and run `nds_crawl()`. The new csv file `urls_file` has additional columns Time, Title, URL, Scraped. ***Do not manually edit and save this csv file, since values in 'Scraped' column might become string value, not boolean.***   
+Now, set `programs_file` to be the same as `urls_file` (the csv with 7 columns obtained in previous step) and run `select_urls()` to fill in missing title and time. Finally, run `nds_scrape()` using the filled table of `programs_file`.
 
 ## How to use the Colab notebook for video clips
 Upload all the emails from NDS as `.xml` files to a Google Driver folder, and adjust the filepaths accordingly. The notebook is similar to `nds_scraper.py`, thus a detailed script logic is omitted here.

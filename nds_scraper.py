@@ -4,7 +4,7 @@
 # Revised by Xinyan Xiang '22 in July 2020
 # Revised by Hiromichi Ueda '21 in February 2021
 # 
-# Last execution in macOS Big Sur in February 2021 
+# Last execution in macOS Big Sur in March 2021 
 # with Python 3.8.3, Selenium 3.141.0, Pandas 1.2.0
 
 import pandas as pd
