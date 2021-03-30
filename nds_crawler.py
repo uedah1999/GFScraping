@@ -2,9 +2,9 @@
 # make a query and write the results to urls_file csv.
 # Written by Nobuaki Masaki '20 in June 2019
 # Revised by Xinyan Xiang '22 in July 2020
-# Revised by Hiromichi Ueda '21 in February 2021
+# Revised by Hiromichi Ueda '21 in March 2021
 # 
-# Last execution in macOS Big Sur in February 2021 
+# Last execution in macOS Big Sur in March 2021 
 # with Python 3.8.3, Selenium 3.141.0, Pandas 1.2.0
 
 import pandas as pd
@@ -49,6 +49,9 @@ def return_Source_xpath(Source):
     if Source == 'WMSN':
         return '//*[@id="sources_listbox"]/li[11]'
 
+    if Source == 'WISC':
+        return '//*[@id="sources_listbox"]/li[9]'
+
     if Source == 'WKOW':
         return '//*[@id="sources_listbox"]/li[10]'
 
@@ -85,6 +88,9 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
         # and the driver has not encounterd any fatal failure
         while Driver_Success and (query_idx < num_query): 
             row = Query_List.loc[query_idx,]
+            Market = row['Market']
+            Source = row['Source']
+            Date_str = row['Date']
             # a list to store a program by its identification and its url
             programs = []
             print("Making " + str(query_idx) + "th query.")
@@ -100,9 +106,6 @@ def nds_crawl(username, password, programs_file, urls_file, failed_query_file, d
                     time.sleep(3)
 
                     # defining fields to select
-                    Market = row['Market']
-                    Source = row['Source']
-                    Date_str = row['Date']
                     Market_x_path = return_Market_xpath(Market)
                     State_x_path = Market_x_path[0]
                     City_x_path = Market_x_path[1]
