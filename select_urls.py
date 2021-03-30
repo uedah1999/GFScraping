@@ -2,7 +2,7 @@
 # returns a csv file of just the required urls
 # Written by Hiromichi Ueda '21 in January 2021
 # 
-# Last execution in macOS Big Sur in January 2021 
+# Last execution in macOS Big Sur in March 2021 
 # with Python 3.8.3, Pandas 1.2.0
 import pandas as pd
 
@@ -39,4 +39,4 @@ def select_urls(all_urls_file, programs_file):
                 break
 
     df_prog.to_csv(programs_file, index=False)
-    df_missing.to_csv(all_urls_file, index=False)
+    df_url.to_csv(all_urls_file, index=False)
